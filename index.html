@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Career Model Lab：通过星盘数据探索未来十年的职业变化信号。模型结果仅作探索参考。">
+  <title>Career Model Lab · 职业发展时间轴</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<header class="site-header"><a class="brand" href="./"><span class="brand-symbol">✳</span><span>CAREER <strong>MODEL LAB</strong></span></a><span class="version">CAREER V2.0 · BETA</span></header>
+<main>
+<section class="hero"><div class="eyebrow"><span class="dot"></span> CAREER TIMING EXPLORER</div><h1>看见你的下一段<br><em>职业发展周期。</em></h1><p class="hero-sub">一次粘贴星盘信息，探索未来十年的职业变化信号、关键时间段和潜在转折。每个缩写都有解释，每项发现都可以追溯到对应的天象。</p><div class="hero-notes"><span>✓ 无需注册</span><span>✓ 免费试用</span><span>✓ 在浏览器中计算</span></div></section>
+<section class="app-shell" aria-labelledby="start-heading">
+<div class="step-indicator"><span class="active" id="step1-label">01 导入星盘</span><span id="step2-label">02 校验信息</span><span id="step3-label">03 10年报告</span></div>
+<div id="import-view" class="view active">
+  <div class="section-heading"><div><div class="kicker">STEP 01 · IMPORT YOUR CHART</div><h2 id="start-heading">粘贴星盘数据</h2><p>请复制占星 App 导出的文字版星盘。也可以先体验我们准备的示范数据。</p></div></div>
+  <label class="field-label" for="raw-chart">星盘文字数据</label>
+  <textarea id="raw-chart" placeholder="粘贴你从占星 App 复制的星盘全文…\n\n例如：\n出生时间：1992-12-21 22:35\n时区：东8区\n经纬度：31.23, 121.47\nMC：天秤座 15°30′" spellcheck="false"></textarea>
+  <div class="row-actions"><button id="demo-btn" class="button muted">填入示范数据</button><button id="parse-btn" class="button primary">继续：识别星盘 <span>→</span></button></div>
+  <div class="help-row"><span>✦ 支持出生日期、时间、经纬度及行星数据</span><span>你的输入不会上传到我们的服务器</span></div>
+  <details class="info"><summary>不确定从哪里复制？</summary><p>优先复制包含出生时间、时区、出生地点坐标、天顶 MC 和行星位置的文字版导出。当前测试版使用「回归黄道」。如果没有完整天顶信息，填写经度与准确出生时间后可计算 MC；支持回归黄道与恒星黄道 Lahiri，请确保与源软件一致。</p></details>
+</div>
+<div id="validation-view" class="view">
+  <div class="section-heading"><div><div class="kicker">STEP 02 · VERIFY YOUR DATA</div><h2>检查识别结果</h2><p>先确认出生资料。缺失的项目可以直接修正，再开始计算。</p></div></div>
+  <div id="parse-warnings" class="notice"></div>
+  <div class="form-grid">
+    <label>出生日期 <input type="date" id="birth-date"></label>
+    <label>当地出生时间 <input type="time" id="birth-time" step="60"></label>
+    <label>出生地时区（UTC）<input id="birth-tz" placeholder="+08:00"></label>
+    <label>出生地经度（东经为正）<input id="birth-long" type="number" step="any" placeholder="121.47"></label>
+    <label>天顶 MC（可选，黄经0–360°）<input id="birth-mc" type="number" step="any" placeholder="可由时间和经度计算"></label>
+    <label>第二宫宫头（可选，黄经0–360°）<input id="birth-cusp2" type="number" step="any" placeholder="如导出中有则填写"></label>
+  </div>
+  <div class="notice neutral"><strong>计算设置</strong><p>回归黄道 · 地心行星黄经 · 硬相位（合相、刑相、冲相）· 日采样与插值。若原盘为恒星黄道，请勿与本模式混用。MC 可由时间与出生经度计算；第二宫宫头缺失时会减少对应信号。</p></div>
+  <div class="form-grid one-row"><label>预测起始年份 <input type="number" id="start-year" min="1900" max="2060" value="2027"></label></div>
+  <div class="row-actions"><button id="back-btn" class="button muted">← 返回修改</button><button id="analyze-btn" class="button primary">生成十年职业时间轴 <span>→</span></button></div>
+  <div id="calc-status" class="calc-status" role="status" aria-live="polite"></div>
+</div>
+<div id="results-view" class="view">
+  <div class="section-heading results-heading"><div><div class="kicker">YOUR 10-YEAR CAREER EXPLORER</div><h2>十年职业发展时间轴</h2><p id="range-label"></p></div><div class="report-actions"><button class="button muted" id="print-btn">打印 / 保存 PDF</button><button class="button muted" id="json-btn">导出数据</button></div></div>
+  <div id="report-notice" class="notice caution"></div>
+  <div class="stat-grid" id="summary-stats"></div>
+  <div class="panel"><div class="panel-heading"><div><h3>年度信号分布</h3><p>显示符合模型规则的相位时间段数量，而非晋升概率或职业成功分</p></div><div class="legend"><span><i class="swatch pink"></i>GR 外部变化</span><span><i class="swatch blue"></i>C 个人行动</span></div></div><div id="timeline" class="timeline" role="group" aria-label="十年职业信号柱状图"></div></div>
+  <div class="year-section"><div class="year-selector"><div><div class="kicker">YEARLY DETAIL</div><h3 id="year-title">年度详情</h3></div><select id="year-select" aria-label="选择分析年份"></select></div><div id="year-detail"></div></div>
+  <div class="panel"><h3>如何理解结果？</h3><div class="glossary" id="glossary"></div></div>
+  <section id="print-all" class="print-all"></section>
+  <div class="row-actions"><button class="button muted" id="restart-btn">← 分析另一份星盘</button><button class="button primary" id="print-bottom-btn">导出 PDF 报告 ↓</button></div>
+</div>
+</section>
+<section class="bottom-copy"><div class="eyebrow">BUILT WITH TRANSPARENCY</div><h2>每个结论，都应有依据。</h2><p>本工具会区分「可计算的相位」与「尚无现实证据的职业推断」。它不保证升职、加薪或跳槽，也不替代现实中的职业规划与决策。</p></section>
+</main>
+<footer><span>© Career Model Lab · Research prototype</span><span>星体位置：Swiss Ephemeris / Moshier 预计算数据。分析仅供探索。</span></footer>
+<script type="module" src="./app.js"></script>
+</body>
+</html>
