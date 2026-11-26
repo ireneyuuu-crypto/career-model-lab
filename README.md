@@ -66,3 +66,12 @@ python3 -m http.server 8080
 - `generate_ephemeris.py` — 数据生成脚本
 - `.github/workflows/pages.yml` — GitHub Pages 自动部署
 - `tests/engine.test.js` — 基础单元测试
+
+## V1.1 · 极简手绘交互首页
+
+- 新增柔和暖白首页、双人手绘人物、产品功能、使用步骤及示例结构。
+- 首页 CTA 直达原有星盘导入面板；报告计算引擎原样保留。
+- 小幅滚动淡入、星光呼吸、响应式布局，并支持系统减少动态效果设置。
+- 新增 `assets/future-life-illustration.webp` 与 `landing.js`。
+- 修复校验页缺少 `zodiac-mode` 下拉框的问题。
+- **注意：本次仅更新前端视觉与操作入口，并未增加模型结果验证能力。**
