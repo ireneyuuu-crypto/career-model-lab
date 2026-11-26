@@ -81,7 +81,7 @@ export function validateSettings({date,time,tz,long,mc,cusp2,startYear}){
  return {errors:errs,utc:parsed};
 }
 const cache=new Map();
-export async function loadYear(year){if(year<1900||year>2070)throw new Error(`星历数据不支持 ${year} 年。`);if(!cache.has(year)){cache.set(year,fetch(`./data/${year}.json`).then(r=>{if(!r.ok)throw new Error(`无法读取 ${year} 年星历：请使用静态网站服务，而不是直接打开本地文件。`);return r.json()}));}return cache.get(year)}
+export async function loadYear(year){if(year<1900||year>2070)throw new Error(`星历数据不支持 ${year} 年。`);if(!cache.has(year)){cache.set(year,fetch(`./${year}.json`).then(r=>{if(!r.ok)throw new Error(`无法读取 ${year} 年星历：请使用静态网站服务，而不是直接打开本地文件。`);return r.json()}));}return cache.get(year)}
 function interpolate(a,b,f){let diff=(b-a+540)%360-180;return norm(a+f*diff)}
 export async function ephemerisAt(date){const y=date.getUTCFullYear(),start=Date.UTC(y,0,1),day=(date.getTime()-start)/86400000,ix=Math.floor(day),f=day-ix;const current=await loadYear(y),next=ix+1<current.length?current[ix+1]:(await loadYear(y+1))[0];const a=current[ix];if(!a||!next)throw new Error('星历日期不在支持范围内。');return {...Object.fromEntries(PLANETS.map((p,i)=>[p,interpolate(a[i],next[i],f)])),ayanamsa:interpolate(a[10],next[10],f)};}
 function targetList(natal,mc,cusp2){const p=[{id:'mc',name:'天顶（MC）',longitude:mc,priority:1},{id:'ruler10',name:'第十宫宫主星',longitude:natal[RULERS[Math.floor(mc/30)]],priority:1},{id:'sun',name:'本命太阳',longitude:natal.sun,priority:2},{id:'saturn',name:'本命土星',longitude:natal.saturn,priority:2}];if(cusp2!==null){p.push({id:'cusp2',name:'第二宫宫头',longitude:cusp2,priority:3});p.push({id:'ruler2',name:'第二宫宫主星',longitude:natal[RULERS[Math.floor(cusp2/30)]],priority:3});}return p.filter(t=>Number.isFinite(t.longitude));}
